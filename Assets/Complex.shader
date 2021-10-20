@@ -44,17 +44,20 @@ Shader "Unlit/Complex"
             {
                 float2 c = float2(i.uv.x, i.uv.y);
                 float2 z = c;
-                for (int i = 0; i < 20; ++i)
+                int depth = 20;
+                float count = 0.0;
+                for (int i = 0; i < depth; ++i)
                 {
                     float2 z2 = float2(z.x * z.x - z.y * z.y, 2 * z.x * z.y);
                     z = z2 + c;
                     if (length(z) > 2.0)
                     {
+                        count = float(i + 1) / float(depth);
                         break;
                     }
                 }
-                fixed4 col = fixed4(i / 20.0f, 0.0, 0.0, 1.0);
-                return col;
+                fixed4 col = tex2D(_MainTex, fixed2(count, 0.0));
+                return col * step(1.0 / depth, float(count));
             }
             ENDCG
         }
